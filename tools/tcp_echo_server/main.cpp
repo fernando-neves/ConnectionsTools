@@ -11,24 +11,23 @@ static std::shared_ptr<asio::io_service> io_service;
 
 static void service_thread(const std::shared_ptr<asio::io_service>& io_service)
 {
-    asio::io_service::work work(*io_service);
+	asio::io_service::work work(*io_service);
 
-    do
-    {
-        try
-        {
-            io_service->run();
-            break;
-        }
-        catch (const std::system_error& ex)
-        {
-            if (ex.code().value() == (10057) /*asio::error::not_connected*/)
-                continue;
+	do
+	{
+		try
+		{
+			io_service->run();
+			break;
+		}
+		catch (const std::system_error& ex)
+		{
+			if (ex.code().value() == (10057) /*asio::error::not_connected*/)
+				continue;
 
-            break;
-        }
-    }
-    while (true);
+			break;
+		}
+	} while (true);
 }
 
 class tcp_downstream
@@ -39,7 +38,7 @@ public:
 
 	explicit tcp_downstream(std::shared_ptr<asio::io_service> service)
 		: m_io_service(std::move(service))
-		  , m_remote_port(0)
+		, m_remote_port(0)
 	{
 		m_downstream_socket = std::make_shared<asio::ip::tcp::socket>(*m_io_service);
 	}
@@ -113,9 +112,9 @@ public:
 
 		auto self(shared_from_this());
 		auto bounded_function = [self](const std::error_code& error, const size_t bytes_transferred)
-		{
-			self->handler_send_packet(error, bytes_transferred);
-		};
+			{
+				self->handler_send_packet(error, bytes_transferred);
+			};
 
 		std::string data_buffer = std::string((char*)buffer, size);
 		if (data_buffer == "get_remote_address")
@@ -151,9 +150,9 @@ public:
 
 		auto self(shared_from_this());
 		auto bounded_function = [self](const std::error_code& error, const size_t bytes_transferred)
-		{
-			self->handler_receive(error, bytes_transferred);
-		};
+			{
+				self->handler_receive(error, bytes_transferred);
+			};
 
 		const auto asio_buffer = asio::buffer(m_receive_buffer.data(), m_receive_buffer.size());
 		m_downstream_socket->async_receive(asio_buffer, bounded_function);
@@ -182,10 +181,10 @@ private:
 	std::string m_remote_address;
 	uint16_t m_remote_port;
 
-	std::atomic<bool> m_started{false};
-	std::atomic<bool> m_is_sending{false};
-	std::atomic<bool> m_is_receiving{false};
-	std::atomic<bool> m_is_terminated{false};
+	std::atomic<bool> m_started{ false };
+	std::atomic<bool> m_is_sending{ false };
+	std::atomic<bool> m_is_receiving{ false };
+	std::atomic<bool> m_is_terminated{ false };
 
 	std::vector<uint8_t> m_receive_buffer;
 
@@ -239,9 +238,9 @@ public:
 
 		const auto downstream_socket = std::make_shared<tcp_downstream>(m_io_service);
 		auto bounded_function = [self, downstream_socket](const std::error_code error)
-		{
-			self->handler_accept(downstream_socket, error);
-		};
+			{
+				self->handler_accept(downstream_socket, error);
+			};
 
 		PLOGD << "create and try listen new downstream - ";
 
@@ -295,9 +294,9 @@ private:
 	std::string m_local_address;
 	uint16_t m_local_port;
 
-	std::atomic<bool> m_started{false};
-	std::atomic<bool> m_accepting{false};
-	std::atomic<bool> m_is_terminated{false};
+	std::atomic<bool> m_started{ false };
+	std::atomic<bool> m_accepting{ false };
+	std::atomic<bool> m_is_terminated{ false };
 };
 
 int main()
@@ -315,7 +314,7 @@ int main()
 	current_server->listen("0.0.0.0", 7171);
 
 	service_thread(io_service);
-    
+
 	PLOGD << "started io_service";
 	return 0;
 }
