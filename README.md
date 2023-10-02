@@ -17,4 +17,4 @@ This repository contains a set of subprojects related to network communication u
 1. Clone this repository:
 
 ```bash
-git clone https://github.com/fernando-neves/ConnectionsTools.git && cd ConnectionsTools && sudo ./bootstrap.sh
+git clone https://github.com/fernando-neves/ConnectionsTools.git && cd ConnectionsTools && sudo bash ./bootstrap.sh
