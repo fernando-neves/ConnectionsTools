@@ -51,11 +51,11 @@ public:
 		m_local_address = address;
 		m_local_port = port;
 
-		m_local_endpoint = std::make_shared<asio::ip::udp::endpoint>(asio::ip::make_address(address), port);
-		m_local_socket = std::make_shared<asio::ip::udp::socket>(*m_io_service, *m_local_endpoint);
+		m_endpoint = std::make_shared<asio::ip::udp::endpoint>(asio::ip::make_address(address), port);
+		m_socket = std::make_shared<asio::ip::udp::socket>(*m_io_service, *m_endpoint);
 
-		m_local_socket->set_option(asio::socket_base::send_buffer_size(262144));
-		m_local_socket->set_option(asio::socket_base::receive_buffer_size(262144));
+		m_socket->set_option(asio::socket_base::send_buffer_size(262144));
+		m_socket->set_option(asio::socket_base::receive_buffer_size(262144));
 
 		m_receive_buffer.resize(262144);
 
@@ -76,8 +76,8 @@ public:
 		PLOGD << "call terminate downstream - m_is_terminated: " << self->m_is_terminated;
 		try
 		{
-			self->m_local_socket->close();
-			self->m_local_socket.reset();
+			self->m_socket->close();
+			self->m_socket.reset();
 		}
 		catch (const std::exception& e)
 		{
@@ -105,7 +105,7 @@ public:
 			};
 
 		const auto asio_buffer = asio::buffer(m_receive_buffer.data(), m_receive_buffer.size());
-		m_local_socket->async_receive_from(asio_buffer, *last_received_endpoint, bounded_function);
+		m_socket->async_receive_from(asio_buffer, *last_received_endpoint, bounded_function);
 	}
 
 	void handler_receive_from(const std::shared_ptr<asio::ip::udp::endpoint>& last_received_endpoint, const std::error_code& error, const size_t bytes_transferred)
@@ -147,7 +147,7 @@ public:
 			data_buffer = last_received_endpoint->address().to_v4().to_string() + ":" + std::to_string(last_received_endpoint->port());
 
 		const auto asio_buffer = asio::buffer(data_buffer.data(), data_buffer.size());
-		m_local_socket->async_send_to(asio_buffer, *last_received_endpoint, bounded_function);
+		m_socket->async_send_to(asio_buffer, *last_received_endpoint, bounded_function);
 	}
 
 	void handler_send_packet_to(const std::shared_ptr<asio::ip::udp::endpoint>& last_received_endpoint, const std::error_code& error, size_t bytes_transferred)
@@ -167,8 +167,8 @@ public:
 	}
 
 private:
-	std::shared_ptr<asio::ip::udp::endpoint> m_local_endpoint;
-	std::shared_ptr<asio::ip::udp::socket> m_local_socket;
+	std::shared_ptr<asio::ip::udp::endpoint> m_endpoint;
+	std::shared_ptr<asio::ip::udp::socket> m_socket;
 
 	std::shared_ptr<asio::io_service> m_io_service;
 
