@@ -19,3 +19,8 @@ This repository contains a set of subprojects related to network communication u
 ```bash
 git clone https://github.com/your-username/ConnectionsTools.git
 cd ConnectionsTools
+
+mkdir build
+cd build
+cmake ..
+make
