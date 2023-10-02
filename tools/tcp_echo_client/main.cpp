@@ -169,11 +169,12 @@ public:
 
 	void send_packet(void* buffer, const size_t size)
 	{
-		if (m_is_terminated && !m_is_connected)
+		if (m_is_terminated || m_is_sending)
 		{
 			return;
 		}
 
+		m_is_sending = true;
 		auto self(shared_from_this());
 		auto bounded_function = [self](const std::error_code& error, const size_t bytes_transferred)
 		{

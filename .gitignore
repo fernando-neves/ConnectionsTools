@@ -36,4 +36,7 @@ submodules/
 .vs/
 out/
 build/
-bind/
+bin/
+build_debug/
+build_release/
+build_relwithdebinfo/
