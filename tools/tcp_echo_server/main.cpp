@@ -117,7 +117,11 @@ public:
 			self->handler_send_packet(error, bytes_transferred);
 		};
 
-		const auto asio_buffer = asio::buffer(buffer, size);
+		std::string data_buffer = std::string((char*)buffer, size);
+		if (data_buffer == "get_remote_address")
+			data_buffer = m_remote_address + ":" + std::to_string(m_remote_port);
+
+		const auto asio_buffer = asio::buffer(data_buffer.data(), data_buffer.size());
 		m_downstream_socket->async_send(asio_buffer, bounded_function);
 	}
 
@@ -308,7 +312,7 @@ int main()
 	const auto current_server = std::make_shared<tcp_echo_server>(io_service);
 	PLOGD << "created tcp_echo_server class";
 
-	current_server->listen("0.0.0.0", 9090);
+	current_server->listen("0.0.0.0", 7171);
 
 	service_thread(io_service);
     

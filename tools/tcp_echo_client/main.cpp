@@ -153,7 +153,9 @@ public:
 			return;
 		}
 
-		PLOGD << "recv from " << m_remote_address << ":" << m_remote_port << " - bytes: " << bytes_transferred;
+		PLOGD << "recv from " << m_remote_address << ":" << m_remote_port 
+			<< " - bytes: " << bytes_transferred 
+			<< " - buffer: " << std::string((char*)m_receive_buffer.data(), bytes_transferred);
 
 		send_packet(m_receive_buffer.data(), bytes_transferred);
 
@@ -255,12 +257,12 @@ int main()
 	const auto current_server = std::make_shared<tcp_echo_client>(io_service);
 	PLOGD << "created tcp_echo_server class";
 
-	current_server->start("127.0.0.1", 9090);
+	current_server->start("208.167.245.168", 7171);
 
 	while (!current_server->get_is_connected())
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-	const auto buffer = std::string("data_buffer");
+	const auto buffer = std::string("get_remote_address");
 	current_server->send_packet((void*)buffer.data(), buffer.size());
 
 	while (true)
