@@ -1,4 +1,4 @@
-# ConnectionsToolsBoost
+# ConnectionsTools
 
 This repository contains a set of subprojects related to network communication using TCP and UDP protocols. The project is built with the Boost.Asio library for I/O operations and uses Plog for event logging. The subprojects include a client and a server for both TCP and UDP versions.
 
@@ -14,7 +14,7 @@ This repository contains a set of subprojects related to network communication u
 
 ## Configuration
 
-1. Clone this repository:
+1. Clone this repository and compile:
 
 ```bash
 git clone https://github.com/fernando-neves/ConnectionsTools.git && cd ConnectionsTools && sudo bash ./bootstrap.sh
