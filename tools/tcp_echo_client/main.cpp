@@ -153,8 +153,12 @@ public:
 			return;
 		}
 
+		auto end_time = std::chrono::high_resolution_clock::now();
+		auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - m_start_time);
+
 		PLOGD << "recv from " << m_remote_address << ":" << m_remote_port 
-			<< " - bytes: " << bytes_transferred 
+			<< " - bytes: " << bytes_transferred
+			<< " - latency: " << elapsed_time.count() << " ms"
 			<< " - buffer: " << std::string((char*)m_receive_buffer.data(), bytes_transferred);
 
 		send_packet(m_receive_buffer.data(), bytes_transferred);
@@ -188,6 +192,8 @@ public:
 			terminate();
 			return;
 		}
+
+		m_start_time = std::chrono::high_resolution_clock::now();
 
 		PLOGD << "send packet to " << m_remote_address << ":" << m_remote_port << " - bytes: " << bytes_transferred;
 		m_is_sending = false;
@@ -240,6 +246,7 @@ private:
 	std::shared_ptr<asio::io_service> m_io_service;
 
 	std::vector<uint8_t> m_receive_buffer;
+	std::chrono::steady_clock::time_point m_start_time;
 
 	std::shared_ptr<asio::ip::tcp::socket> m_upstream_socket;
 };
