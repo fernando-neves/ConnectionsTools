@@ -246,7 +246,7 @@ private:
 	std::shared_ptr<asio::io_service> m_io_service;
 
 	std::vector<uint8_t> m_receive_buffer;
-	std::chrono::steady_clock::time_point m_start_time;
+	std::chrono::time_point<std::chrono::high_resolution_clock> m_start_time;
 
 	std::shared_ptr<asio::ip::tcp::socket> m_upstream_socket;
 };
