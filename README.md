@@ -17,10 +17,4 @@ This repository contains a set of subprojects related to network communication u
 1. Clone this repository:
 
 ```bash
-git clone https://github.com/your-username/ConnectionsTools.git
-cd ConnectionsTools
-
-mkdir build
-cd build
-cmake ..
-make
+git clone https://github.com/your-username/ConnectionsTools.git && cd ConnectionsTools && sudo ./bootstrap.sh
