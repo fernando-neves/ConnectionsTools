@@ -6,6 +6,18 @@ if ! command -v cmake &> /dev/null; then
   sudo apt install -y cmake
 fi
 
+if ! command -v g++ &> /dev/null; then
+  echo "Installing g++..."
+  sudo apt update
+  sudo apt install -y g++
+fi
+
+if ! command -v make &> /dev/null; then
+  echo "Installing build-essential..."
+  sudo apt update
+  sudo apt install -y build-essential
+fi
+
 if [ ! -d "submodules/asio" ]; then
   echo "Cloning Boost.Asio..."
   git clone https://github.com/chriskohlhoff/asio.git submodules/asio
