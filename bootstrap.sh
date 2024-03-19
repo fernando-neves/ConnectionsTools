@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if ! command -v cmake &> /dev/null; then
+  echo "Installing CMake..."
+  sudo apt update
+  sudo apt install -y cmake
+fi
+
 if [ ! -d "submodules/asio" ]; then
   echo "Cloning Boost.Asio..."
   git clone https://github.com/chriskohlhoff/asio.git submodules/asio
