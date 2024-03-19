@@ -3,6 +3,7 @@
 #include <utility>
 
 /* PLOG INCLUDES */
+#include <random>
 #include <plog/Log.h>
 #include <plog/Init.h>
 #include <plog/Formatters/TxtFormatter.h>
@@ -94,7 +95,7 @@ public:
 		}
 	}
 
-	void send_packet_to(const std::shared_ptr<asio::ip::udp::endpoint>& remote_endpoint, void* buffer, const size_t size)
+	void send_packet_to(const std::shared_ptr<asio::ip::udp::endpoint>& remote_endpoint, char* buffer, const size_t size)
 	{
 		if (m_is_terminated || m_is_sending)
 		{
@@ -141,8 +142,7 @@ public:
 
 		m_is_receiving = true;
 
-		std::shared_ptr<asio::ip::udp::endpoint> last_received_endpoint =
-			std::make_shared<asio::ip::udp::endpoint>();
+		auto last_received_endpoint = std::make_shared<asio::ip::udp::endpoint>();
 
 		auto self(shared_from_this());
 		auto bounded_function = [self, last_received_endpoint](const std::error_code& error, const size_t bytes_transferred)
@@ -163,16 +163,16 @@ public:
 			return;
 		}
 
-		auto end_time = std::chrono::high_resolution_clock::now();
-		auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - m_start_time);
+		const auto end_time = std::chrono::high_resolution_clock::now();
+		const auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - m_start_time);
 
 		PLOGD << "recv from " << last_received_endpoint->address().to_v4().to_string()
 			<< ":" << last_received_endpoint->port()
 			<< " - bytes: " << bytes_transferred
 			<< " - latency: " << elapsed_time.count() << " ms"
-			<< " - buffer: " << std::string((char*)m_receive_buffer.data(), bytes_transferred);
+			<< " - buffer: " << std::string(reinterpret_cast<char*>(m_receive_buffer.data()), bytes_transferred);
 
-		send_packet_to(last_received_endpoint, m_receive_buffer.data(), bytes_transferred);
+		send_packet_to(last_received_endpoint, reinterpret_cast<char*>(m_receive_buffer.data()), bytes_transferred);
 
 		m_is_receiving = false;
 		set_receive_from();
@@ -202,17 +202,15 @@ int main()
 	io_service = std::make_shared<asio::io_service>();
 	service_thread(io_service);
 
-	const auto current_server = std::make_shared<udp_echo_client>(io_service);
-	PLOGD << "created tcp_echo_server class";
+	const auto current_client = std::make_shared<udp_echo_client>(io_service);
+	PLOGD << "created udp_echo_client class";
 
-	current_server->start();
+	current_client->start();
 
-	auto m_remote_endpoint = 
-		std::make_shared<asio::ip::udp::endpoint>(
-			asio::ip::address_v4::from_string("208.167.245.168"), 7172);
+	const auto remote_endpoint = std::make_shared<asio::ip::udp::endpoint>(asio::ip::address_v4::from_string("208.167.245.168"), 7172);
 
 	const auto buffer = std::string("get_remote_address");
-	current_server->send_packet_to(m_remote_endpoint, (void*)buffer.data(), buffer.size());
+	current_client->send_packet_to(remote_endpoint, const_cast<char*>(buffer.data()), buffer.size());
 
 	while (true)
 		std::this_thread::sleep_for(std::chrono::milliseconds(UINT16_MAX));

@@ -153,15 +153,15 @@ public:
 			return;
 		}
 
-		auto end_time = std::chrono::high_resolution_clock::now();
-		auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - m_start_time);
+		const auto end_time = std::chrono::high_resolution_clock::now();
+		const auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - m_start_time);
 
-		PLOGD << "recv from " << m_remote_address << ":" << m_remote_port 
+		PLOGD << "recv from " << m_remote_address << ":" << m_remote_port
 			<< " - bytes: " << bytes_transferred
 			<< " - latency: " << elapsed_time.count() << " ms"
-			<< " - buffer: " << std::string((char*)m_receive_buffer.data(), bytes_transferred);
+			<< " - buffer: " << std::string(reinterpret_cast<char*>(m_receive_buffer.data()), bytes_transferred);
 
-		send_packet(m_receive_buffer.data(), bytes_transferred);
+		//send_packet(m_receive_buffer.data(), bytes_transferred);
 
 		m_is_receiving = false;
 		set_receive();
@@ -262,19 +262,21 @@ int main()
 	io_service = std::make_shared<asio::io_service>();
 	service_thread(io_service);
 
-	const auto current_server = std::make_shared<tcp_echo_client>(io_service);
-	PLOGD << "created tcp_echo_server class";
+	const auto current_client = std::make_shared<tcp_echo_client>(io_service);
+	PLOGD << "created tcp_echo_client class";
 
-	current_server->start("208.167.245.168", 7171);
+	current_client->start("127.0.0.1", 6000);
 
-	while (!current_server->get_is_connected())
+	while (!current_client->get_is_connected())
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
 	const auto buffer = std::string("get_remote_address");
-	current_server->send_packet((void*)buffer.data(), buffer.size());
 
 	while (true)
-		std::this_thread::sleep_for(std::chrono::milliseconds(UINT16_MAX));
+	{
+		current_client->send_packet((void*)buffer.data(), buffer.size());
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));
+	}
 
 	PLOGD << "started io_service";
 	return 0;

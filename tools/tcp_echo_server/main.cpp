@@ -116,7 +116,7 @@ public:
 				self->handler_send_packet(error, bytes_transferred);
 			};
 
-		std::string data_buffer = std::string((char*)buffer, size);
+		auto data_buffer = std::string(static_cast<char*>(buffer), size);
 		if (data_buffer == "get_remote_address")
 			data_buffer = m_remote_address + ":" + std::to_string(m_remote_port);
 
@@ -243,6 +243,7 @@ public:
 			};
 
 		PLOGD << "create and try listen new downstream - ";
+		PLOGD << "endpoint " << m_acceptor->local_endpoint().address().to_v4().to_string() << ":" << m_acceptor->local_endpoint().port();
 
 		m_acceptor->async_accept(*downstream_socket->socket(), bounded_function);
 	}
