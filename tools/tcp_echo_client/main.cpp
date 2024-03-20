@@ -161,7 +161,7 @@ public:
 			<< " - latency: " << elapsed_time.count() << " ms"
 			<< " - buffer: " << std::string(reinterpret_cast<char*>(m_receive_buffer.data()), bytes_transferred);
 
-		//send_packet(m_receive_buffer.data(), bytes_transferred);
+		send_packet(m_receive_buffer.data(), bytes_transferred);
 
 		m_is_receiving = false;
 		set_receive();
@@ -271,12 +271,10 @@ int main()
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
 	const auto buffer = std::string("get_remote_address");
+	current_client->send_packet((void*)buffer.data(), buffer.size());
 
 	while (true)
-	{
-		current_client->send_packet((void*)buffer.data(), buffer.size());
-		std::this_thread::sleep_for(std::chrono::milliseconds(500));
-	}
+		std::this_thread::sleep_for(std::chrono::milliseconds(UINT16_MAX));
 
 	PLOGD << "started io_service";
 	return 0;

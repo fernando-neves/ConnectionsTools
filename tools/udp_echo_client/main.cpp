@@ -207,7 +207,7 @@ int main()
 
 	current_client->start();
 
-	const auto remote_endpoint = std::make_shared<asio::ip::udp::endpoint>(asio::ip::address_v4::from_string("208.167.245.168"), 7172);
+	const auto remote_endpoint = std::make_shared<asio::ip::udp::endpoint>(asio::ip::address_v4::from_string("198.16.109.30"), 7172);
 
 	const auto buffer = std::string("get_remote_address");
 	current_client->send_packet_to(remote_endpoint, const_cast<char*>(buffer.data()), buffer.size());
