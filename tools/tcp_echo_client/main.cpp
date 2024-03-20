@@ -265,7 +265,7 @@ int main()
 	const auto current_client = std::make_shared<tcp_echo_client>(io_service);
 	PLOGD << "created tcp_echo_client class";
 
-	current_client->start("127.0.0.1", 6000);
+	current_client->start("198.16.109.30", 7171);
 
 	while (!current_client->get_is_connected())
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
