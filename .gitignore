@@ -32,7 +32,6 @@
 *.app
 
 # Compiled folders
-submodules/
 .vs/
 out/
 build/
@@ -40,3 +39,9 @@ bin/
 build_debug/
 build_release/
 build_relwithdebinfo/
+/submodules/asio/asio/src/doc
+/submodules/asio/asio/src/examples
+/submodules/asio/asio/src/tests
+/submodules/plog/samples
+/submodules/plog/doc
+/submodules/plog/test
