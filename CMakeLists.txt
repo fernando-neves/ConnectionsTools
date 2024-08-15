@@ -30,6 +30,12 @@ include_directories(submodules/asio/asio/include)
 include_directories(submodules/plog/include)
 include_directories(submodules/jsoncpp/include)
 
+option(DEBUGGING_MESSAGES_ON_UPSTREAM "Enable debugging messages for the upstream module" OFF)
+
+if(DEBUGGING_MESSAGES_ON_UPSTREAM)
+    add_definitions(-DDEBUGGING_MESSAGES_ON_UPSTREAM)
+endif()
+
 set(JSONCPP_WITH_TESTS OFF CACHE BOOL "Compile and (for jsoncpp_check) run JsonCpp test executables")
 set(JSONCPP_WITH_EXAMPLE OFF CACHE BOOL "Compile JsonCpp example")
 
