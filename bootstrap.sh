@@ -32,6 +32,13 @@ else
   echo "Plog submodule already exists."
 fi
 
+if [ ! -d "submodules/jsoncpp" ]; then
+  echo "Cloning Jsoncpp..."
+  git clone https://github.com/open-source-parsers/jsoncpp.git submodules/jsoncpp
+else
+  echo "Jsoncpp submodule already exists."
+fi
+
 if [ -d "build_release" ]; then
   echo "Cleaning build_release..."
   rm -rf build_release
