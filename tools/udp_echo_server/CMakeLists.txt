@@ -21,5 +21,6 @@ link_libraries(Threads::Threads)
 include_directories(../../submodules/asio/asio/include)
 include_directories(../../submodules/plog/include)
 
-add_executable(${PROJECT_NAME}
-    main.cpp)
+add_executable(${PROJECT_NAME} main.cpp)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE jsoncpp_lib)
