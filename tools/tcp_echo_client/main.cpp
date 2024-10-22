@@ -1,6 +1,8 @@
 /* ASIO INCLUDES */
 #include <asio.hpp>
 #include <utility>
+#include <thread>
+#include <chrono>
 
 /* PLOG INCLUDES */
 #include <plog/Log.h>
